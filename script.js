@@ -34,17 +34,18 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 window.addEventListener('scroll', () => {
     const navbar = document.querySelector('.navbar');
     if (window.scrollY > 50) {
-        navbar.style.background = 'rgba(10, 14, 39, 0.98)';
+        navbar.style.background = 'rgba(0, 0, 0, 0.98)';
     } else {
-        navbar.style.background = 'rgba(10, 14, 39, 0.95)';
+        navbar.style.background = 'rgba(0, 0, 0, 0.95)';
     }
 });
 
-// Contact Form Handling
+// Contact Form Handling with Formspree Integration
 const contactForm = document.getElementById('contactForm');
 const formMessage = document.getElementById('formMessage');
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mrbkrzyz';
 
-contactForm.addEventListener('submit', (e) => {
+contactForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     // Get form values
@@ -66,25 +67,54 @@ contactForm.addEventListener('submit', (e) => {
         return;
     }
 
-    // Simulate form submission (replace with actual backend integration)
-    showMessage('Thank you! Your message has been sent successfully. We will get back to you soon.', 'success');
-    contactForm.reset();
+    // Prepare form data
+    const formData = new FormData(contactForm);
 
-    // In production, you would send this data to your backend:
-    // fetch('/api/contact', {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify({ name, email, service, message })
-    // })
+    // Show loading state
+    const submitBtn = contactForm.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Sending...';
+    submitBtn.disabled = true;
+
+    try {
+        const response = await fetch(FORMSPREE_ENDPOINT, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            showMessage('Thank you! Your message has been sent successfully. We will get back to you soon.', 'success');
+            contactForm.reset();
+        } else {
+            const data = await response.json();
+            if (data.errors) {
+                showMessage(data.errors.map(error => error.message).join(', '), 'error');
+            } else {
+                showMessage('Oops! There was a problem submitting your form. Please try again.', 'error');
+            }
+        }
+    } catch (error) {
+        showMessage('Network error. Please check your connection and try again.', 'error');
+    } finally {
+        // Reset button state
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    }
 });
 
 function showMessage(text, type) {
     formMessage.textContent = text;
     formMessage.className = `form-message ${type}`;
 
-    setTimeout(() => {
-        formMessage.style.display = 'none';
-    }, 5000);
+    // Auto-hide success messages after 5 seconds
+    if (type === 'success') {
+        setTimeout(() => {
+            formMessage.style.display = 'none';
+        }, 5000);
+    }
 }
 
 // Intersection Observer for animation on scroll
