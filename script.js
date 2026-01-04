@@ -30,13 +30,13 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Navbar background on scroll
+// Navbar shadow on scroll (removed background color change)
 window.addEventListener('scroll', () => {
     const navbar = document.querySelector('.navbar');
     if (window.scrollY > 50) {
-        navbar.style.background = 'rgba(0, 0, 0, 0.98)';
+        navbar.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
     } else {
-        navbar.style.background = 'rgba(0, 0, 0, 0.95)';
+        navbar.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.05)';
     }
 });
 
