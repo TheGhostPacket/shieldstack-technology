@@ -9,7 +9,7 @@ A modern, responsive business website for ShieldStack Technology - a cybersecuri
 
 ## 🌐 Live Demo
 
-**Coming Soon:** `https://YOUR_USERNAME.github.io/shieldstack-technology/`
+**Coming Soon:** `https://theghostpacket.com/shieldstack-technology/`
 
 **Portfolio:** [TheGhostPacket.com](https://theghostpacket.com/)
 
